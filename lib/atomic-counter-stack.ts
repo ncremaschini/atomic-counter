@@ -211,7 +211,6 @@ export class AtomicCounterStack extends cdk.Stack {
       defaultValue: 0,
       unit: cloudwatch.Unit.COUNT,
     });
-   
 
   }
 }

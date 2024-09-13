@@ -24,8 +24,12 @@ export const handler = async (event: any = {}): Promise<any> => {
     };
 
     const result = await dynamodb.send(new UpdateItemCommand(params));
-    console.log('counter:', result.Attributes?.atomic_counter.N);
-    return { statusCode: 200, body: JSON.stringify(result) };
+    const counter = Number(result.Attributes?.atomic_counter.N);
+    
+    const resultJson = JSON.stringify({ counter:  counter });
+    
+    console.log(resultJson);
+    return { statusCode: 200, body: resultJson };
     
   } catch (dbError) {
     return { statusCode: 500, body: JSON.stringify(dbError) };
