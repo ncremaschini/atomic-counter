@@ -6,6 +6,9 @@
   },
   "scripts": {
     "build": "tsc",
+    "build-app": "npm run build-dynamo && npm run build-redis",
+    "build-dynamo": "tsc -p ./lib/lambda/dynamo",
+    "build-redis": "tsc -p ./lib/lambda/redis",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"
