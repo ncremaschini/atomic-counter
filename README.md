@@ -37,6 +37,15 @@ Here an example using curl:
 curl -X POST https://<api_id>.execute-api.<region>.amazonaws.com/prod/dynamo/1 -H "x-api-key: <api_key>"
 ```
 
+## How to measure the performance
+You can find a cloudwatch dashboard source json called `cloudwatch-dashboard` into docs folder. 
+
+You can import it in your AWS account to visualize the performance of the two datastores.
+
+The stack also creates two custom metrics to visualize the value of the counter in the two datastores.
+
+In order to produce data i used postman performance's test, sending to the two apis requests to increment the same counter from concurrent clients.
+
 ## Useful commands
 
 * `npm run build`   compile typescript to js
