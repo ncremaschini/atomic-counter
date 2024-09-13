@@ -24,6 +24,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     console.log('incrementing counter for id:', id);
     
     const result = await redis.eval(incrementScript, 1, id);
+    console.log('counter:', result);
     return {
       statusCode: 200,
       body: JSON.stringify({ counter: result }),

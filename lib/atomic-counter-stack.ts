@@ -1,13 +1,12 @@
 import * as cdk from 'aws-cdk-lib';
+import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
+import * as logs from "aws-cdk-lib/aws-logs";
 import * as path from 'path';
 
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 import { Construct } from 'constructs';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
-import { readdirSync } from 'fs';
-
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class AtomicCounterStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -179,8 +178,8 @@ export class AtomicCounterStack extends cdk.Stack {
 
     const plan = api.addUsagePlan('AtomicCounterUsagePlan', {
       name: 'AtomicCounterUsagePlan',
-      throttle: { burstLimit: 5, rateLimit: 10 },
-      quota: { limit: 100, period: cdk.aws_apigateway.Period.DAY },
+      throttle: { burstLimit: 500, rateLimit: 1000 },
+      quota: { limit: 1000000, period: cdk.aws_apigateway.Period.DAY },
       apiStages: [{ api, stage: api.deploymentStage }],
     });
 
@@ -190,5 +189,27 @@ export class AtomicCounterStack extends cdk.Stack {
 
     //print out the api key
     new cdk.CfnOutput(this, 'AtomicCounterApiKey', { value: key.keyId });
+
+    new logs.MetricFilter(this, "DynamoLambdaMetricFilter", {
+      logGroup: dynamoLambda.logGroup,
+      metricNamespace: "AtomicCounter",
+      metricName: "DynamoAtomicCounter",
+      filterPattern: logs.FilterPattern.exists("$.counter"),
+      metricValue: "$.counter",
+      defaultValue: 0,
+      unit: cloudwatch.Unit.COUNT,
+    });
+
+    new logs.MetricFilter(this, "RedisLambdaMetricFilter", {
+      logGroup: dynamoLambda.logGroup,
+      metricNamespace: "AtomicCounter",
+      metricName: "RedisAtomicCounter",
+      filterPattern: logs.FilterPattern.exists("$.counter"),
+      metricValue: "$.counter",
+      defaultValue: 0,
+      unit: cloudwatch.Unit.COUNT,
+    });
+   
+
   }
 }
