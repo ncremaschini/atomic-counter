@@ -103,6 +103,7 @@ export class AtomicCounterStack extends cdk.Stack {
       },
       vpc: vpc,
       securityGroups: [lambdaSecurityGroup],
+      logRetention: logs.RetentionDays.ONE_DAY,
     });
 
     // grant the lambda function read/write permissions to the dynamodb table
@@ -124,6 +125,7 @@ export class AtomicCounterStack extends cdk.Stack {
       },
       vpc: vpc,
       securityGroups: [lambdaSecurityGroup],
+      logRetention: logs.RetentionDays.ONE_DAY,
     });
 
     const api = new cdk.aws_apigateway.RestApi(this, 'AtomicCounterApi', {
@@ -201,7 +203,7 @@ export class AtomicCounterStack extends cdk.Stack {
     });
 
     new logs.MetricFilter(this, "RedisLambdaMetricFilter", {
-      logGroup: dynamoLambda.logGroup,
+      logGroup: redisLambda.logGroup,
       metricNamespace: "AtomicCounter",
       metricName: "RedisAtomicCounter",
       filterPattern: logs.FilterPattern.exists("$.counter"),
