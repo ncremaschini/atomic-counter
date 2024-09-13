@@ -186,14 +186,16 @@
             "width": 24,
             "height": 6,
             "properties": {
+                "metrics": [
+                    [ "AtomicCounter", "DynamoAtomicCounter", { "region": "eu-west-1" } ],
+                    [ ".", "RedisAtomicCounter", { "region": "eu-west-1" } ]
+                ],
                 "view": "timeSeries",
                 "stacked": false,
-                "metrics": [
-                    [ "AtomicCounter", "DynamoAtomicCounter" ],
-                    [ ".", "RedisAtomicCounter" ]
-                ],
                 "region": "eu-west-1",
-                "title": "DynamoAtomicCounter, RedisAtomicCounter"
+                "title": "DynamoAtomicCounter, RedisAtomicCounter",
+                "period": 60,
+                "stat": "Sum"
             }
         }
     ]
