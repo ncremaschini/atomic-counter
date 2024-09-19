@@ -59,8 +59,8 @@ export class AtomicCounterStack extends cdk.Stack {
       tableName: 'atomic-counter',
       partitionKey: { name: 'id', type: cdk.aws_dynamodb.AttributeType.STRING },
       billingMode: cdk.aws_dynamodb.BillingMode.PROVISIONED,
-      readCapacity: 2,
-      writeCapacity: 2,
+      readCapacity: 10,
+      writeCapacity: 10,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
