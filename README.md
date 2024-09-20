@@ -55,3 +55,8 @@ In order to produce data i used postman performance's test, sending to the two a
 * `npx cdk destroy` destroy this stack to your default AWS account/region
 * `npx cdk diff`    compare deployed stack with current state
 * `npx cdk synth`   emits the synthesized CloudFormation template
+
+## What's next
+I'd add lock mechanism to limit the maximum counter value, so the counter can't be incremented over a certain value, to measure: 
+- the performance of the two datastores in case of contention between clients, an
+- the overhead of the lock mechanism.
