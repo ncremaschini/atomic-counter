@@ -57,6 +57,13 @@ In order to produce data i used postman performance's test, sending to the two a
 * `npx cdk synth`   emits the synthesized CloudFormation template
 
 ## What's next
-I'd add lock mechanism to limit the maximum counter value, so the counter can't be incremented over a certain value, to measure: 
-- the performance of the two datastores in case of contention between clients, an
-- the overhead of the lock mechanism.
+I'd implement the following mechanism to limit the counter value.
+
+- lock mechanism
+- conditional writes
+
+in order to measure
+
+- the performance of the two datastores in case of contention between clients
+- the overhead of the lock mechanism / conditional writes
+
