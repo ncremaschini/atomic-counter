@@ -13,6 +13,7 @@ dotenv.config();
 
 const USE_LOCK = process.env.USE_LOCK || 'false';
 const USE_CONDITIONAL_WRITES = process.env.USE_CONDITIONAL_WRITES || 'false';
+const MAX_COUNTER_VALUE = process.env.MAX_COUNTER_VALUE || '10';
 
 export class AtomicCounterStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -106,8 +107,8 @@ export class AtomicCounterStack extends cdk.Stack {
       handler: 'index.handler',
       environment: {
         TABLE_NAME: table.tableName,
-        USE_LOCK: USE_LOCK,
         USE_CONDITIONAL_WRITES: USE_CONDITIONAL_WRITES,
+        MAX_COUNTER_VALUE: MAX_COUNTER_VALUE
       },
       vpc: vpc,
       securityGroups: [lambdaSecurityGroup],
@@ -130,8 +131,8 @@ export class AtomicCounterStack extends cdk.Stack {
       environment: {
         REDIS_URL: redis.attrRedisEndpointAddress,
         REDIS_PORT: redis.attrRedisEndpointPort,
-        USE_LOCK: USE_LOCK,
         USE_CONDITIONAL_WRITES: USE_CONDITIONAL_WRITES,
+        MAX_COUNTER_VALUE: MAX_COUNTER_VALUE
       },
       vpc: vpc,
       securityGroups: [lambdaSecurityGroup],

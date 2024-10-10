@@ -7,7 +7,7 @@ const redis = new Redis({
 });
 
 // LUA script to increment the counter
-const incrementScript = `
+const unconditionalIncrementScript = `
   local counter = redis.call('GET', KEYS[1])
   if not counter then
     counter = 0
@@ -17,13 +17,28 @@ const incrementScript = `
   return counter
 `;
 
+// LUA script to increment the counter only if it is less than the given value
+const conditionalIncrementScript = `
+  local r=redis.call('GET', KEYS[1])
+  if r < ARGV[1] then
+    redis.call('INCR', KEYS[1])
+  end
+`;
+
 export const handler = async (event: any = {}): Promise<any> => {
   
   try {
     const id = event.pathParameters.id;
     console.log('incrementing counter for id:', id);
-    
-    const result = await redis.eval(incrementScript, 1, id);
+
+    const maxCounterValue = process.env.MAX_COUNTER_VALUE || 10;
+
+    let result;
+    if(process.env.USE_CONDITIONAL_WRITES === 'true') {
+      result = await redis.eval(conditionalIncrementScript, 1, id, maxCounterValue);
+    }else{
+      result = await redis.eval(unconditionalIncrementScript, 1, id);
+    }
     
     const resultJson = JSON.stringify({ counter: result });
 
