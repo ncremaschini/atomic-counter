@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
+import * as dotenv from "dotenv";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as path from 'path';
 
@@ -7,6 +8,11 @@ import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-node
 
 import { Construct } from 'constructs';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
+
+dotenv.config();
+
+const USE_LOCK = process.env.USE_LOCK || 'false';
+const USE_CONDITIONAL_WRITES = process.env.USE_CONDITIONAL_WRITES || 'false';
 
 export class AtomicCounterStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -100,6 +106,8 @@ export class AtomicCounterStack extends cdk.Stack {
       handler: 'index.handler',
       environment: {
         TABLE_NAME: table.tableName,
+        USE_LOCK: USE_LOCK,
+        USE_CONDITIONAL_WRITES: USE_CONDITIONAL_WRITES,
       },
       vpc: vpc,
       securityGroups: [lambdaSecurityGroup],
@@ -121,7 +129,9 @@ export class AtomicCounterStack extends cdk.Stack {
       handler: 'index.handler',
       environment: {
         REDIS_URL: redis.attrRedisEndpointAddress,
-        REDIS_PORT: redis.attrRedisEndpointPort
+        REDIS_PORT: redis.attrRedisEndpointPort,
+        USE_LOCK: USE_LOCK,
+        USE_CONDITIONAL_WRITES: USE_CONDITIONAL_WRITES,
       },
       vpc: vpc,
       securityGroups: [lambdaSecurityGroup],
