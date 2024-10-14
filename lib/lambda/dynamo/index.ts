@@ -19,35 +19,58 @@ export const handler = async (event: any = {}): Promise<any> => {
     console.log('using conditional writes:', useConditionalWrites);
     console.log('max counter value:', maxCounterValue);
 
-    let params = {
+    let unconditionalWriteParams = {
       TableName: TABLE_NAME,
       Key: {
         id: { S: id },
       },
       UpdateExpression: 'ADD atomic_counter :inc',
-      ConditionExpression: useConditionalWrites ? 'atomic_counter < :max' : '',
       ExpressionAttributeValues: {
-        ':inc': { N: '1' },
-        ':max': { N: useConditionalWrites ? maxCounterValue : '' },
+        ':inc': { N: '1' }
       },
       ReturnValues: 'UPDATED_NEW' as const,
     };
 
-    const result = await dynamodb.send(new UpdateItemCommand(params));
+    let conditionalWriteParams = {
+      TableName: TABLE_NAME,
+      Key: {
+        id: { S: id },
+      },
+      UpdateExpression: 'ADD atomic_counter :inc',
+      ConditionExpression: 'atomic_counter < :max',
+      ExpressionAttributeValues: {
+        ':inc': { N: '1' },
+        ':max': { N: maxCounterValue },
+      },
+      ReturnValues: 'UPDATED_NEW' as const,
+    };
+
+    const result = await dynamodb.send(new UpdateItemCommand(useConditionalWrites ? conditionalWriteParams : unconditionalWriteParams));
     const counter = Number(result.Attributes?.atomic_counter.N);
     
     const resultJson = JSON.stringify({ counter:  counter });
     
     console.log(resultJson);
-    return { statusCode: 200, body: resultJson };
+    return { 
+      statusCode: 200, 
+      body: JSON.stringify({ error: "Counter has reached its maximum value of: ", maxCounterValue }) 
+    };
     
-  } catch (dbError) {
+  } catch (dbError : any) {
+
+    if(dbError.name === 'ConditionalCheckFailedException' ){
+      return {
+        statusCode: 409,
+        body: JSON.stringify(dbError)
+      };
+    }
+
     let errorMsg = JSON.stringify(dbError)
     console.error(errorMsg);
 
     return { 
       statusCode: 500, 
-      body: JSON.stringify(dbError) 
+      body: JSON.stringify({ error: "Internal server error" })
     };
   }
 };
