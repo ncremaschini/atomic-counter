@@ -20,7 +20,7 @@ const unconditionalIncrementScript = `
 // LUA script to increment the counter only if it is less than the given value
 const conditionalIncrementScript = `
   local r=redis.call('GET', KEYS[1])
-  if r < ARGV[1] then
+  if r < ARGV[2] then
     redis.call('INCR', KEYS[1])
   end
 `;
@@ -43,14 +43,18 @@ export const handler = async (event: any = {}): Promise<any> => {
     const resultJson = JSON.stringify({ counter: result });
 
     console.log(resultJson);
+    
     return {
       statusCode: 200,
       body: resultJson,
     };
   } catch (error) {
+    let errorMsg = JSON.stringify({ error: (error as Error).message })
+    console.error(errorMsg);
+    
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: (error as Error).message }),
+      body: errorMsg
     };
   }
 };
