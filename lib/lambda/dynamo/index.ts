@@ -12,18 +12,23 @@ export const handler = async (event: any = {}): Promise<any> => {
   try {
     const id = event.pathParameters?.id;
     console.log('incrementing counter for id:', id);
-    const USE_CONDITIONAL_WRITES = process.env.USE_CONDITIONAL_WRITES;
     
+    const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
+    const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
+    
+    console.log('using conditional writes:', useConditionalWrites);
+    console.log('max counter value:', maxCounterValue);
+
     let params = {
       TableName: TABLE_NAME,
       Key: {
         id: { S: id },
       },
       UpdateExpression: 'ADD atomic_counter :inc',
-      ConditionExpression: USE_CONDITIONAL_WRITES === 'true' ? 'atomic_counter < :max' : '',
+      ConditionExpression: useConditionalWrites ? 'atomic_counter < :max' : '',
       ExpressionAttributeValues: {
         ':inc': { N: '1' },
-        ':max': { N: process.env.MAX_COUNTER_VALUE || '' },
+        ':max': { N: useConditionalWrites ? maxCounterValue : '' },
       },
       ReturnValues: 'UPDATED_NEW' as const,
     };

@@ -31,10 +31,14 @@ export const handler = async (event: any = {}): Promise<any> => {
     const id = event.pathParameters.id;
     console.log('incrementing counter for id:', id);
 
-    const maxCounterValue = process.env.MAX_COUNTER_VALUE || 10;
+    const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
+    const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
+    
+    console.log('using conditional writes:', useConditionalWrites);
+    console.log('max counter value:', maxCounterValue);
 
     let result;
-    if(process.env.USE_CONDITIONAL_WRITES === 'true') {
+    if(useConditionalWrites) {
       result = await redis.eval(conditionalIncrementScript, 1, id, maxCounterValue);
     }else{
       result = await redis.eval(unconditionalIncrementScript, 1, id);
