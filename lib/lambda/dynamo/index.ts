@@ -8,12 +8,12 @@ const TABLE_NAME = process.env.TABLE_NAME || '';
 
 
 export const handler = async (event: any = {}): Promise<any> => {
-
+ 
   try {
     const id = event.pathParameters?.id;
     console.log('incrementing counter for id:', id);
     const USE_CONDITIONAL_WRITES = process.env.USE_CONDITIONAL_WRITES;
-
+    
     let params = {
       TableName: TABLE_NAME,
       Key: {
@@ -30,19 +30,19 @@ export const handler = async (event: any = {}): Promise<any> => {
 
     const result = await dynamodb.send(new UpdateItemCommand(params));
     const counter = Number(result.Attributes?.atomic_counter.N);
-
-    const resultJson = JSON.stringify({ counter: counter });
-
+    
+    const resultJson = JSON.stringify({ counter:  counter });
+    
     console.log(resultJson);
     return { statusCode: 200, body: resultJson };
-
+    
   } catch (dbError) {
-    let errorMsg = JSON.stringify({ error: (dbError as Error).message })
+    let errorMsg = JSON.stringify(dbError)
     console.error(errorMsg);
 
     return { 
       statusCode: 500, 
-      body: errorMsg 
+      body: JSON.stringify(dbError) 
     };
   }
 };
