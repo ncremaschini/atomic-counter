@@ -14,9 +14,6 @@ export const handler = async (event: any = {}): Promise<any> => {
   try {
     const id = event.pathParameters?.id;
     console.log('incrementing counter for id:', id);
-    
-    
-    
     console.log('using conditional writes:', useConditionalWrites);
     console.log('max counter value:', maxCounterValue);
 
@@ -49,6 +46,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     };
 
     const result = await dynamodb.send(new UpdateItemCommand(useConditionalWrites ? conditionalWriteParams : unconditionalWriteParams));
+    
     const counter = Number(result.Attributes?.atomic_counter.N);
     
     const resultJson = JSON.stringify({ counter:  counter });
@@ -60,20 +58,24 @@ export const handler = async (event: any = {}): Promise<any> => {
     };
     
   } catch (dbError : any) {
-
-    if(dbError.name === 'ConditionalCheckFailedException' ){
-      return {
-        statusCode: 409,
-        body: JSON.stringify({ error: "Counter has reached its maximum value of: ", maxCounterValue }) 
-      };
-    }
-
+    
     let errorMsg = JSON.stringify(dbError)
     console.error(errorMsg);
 
-    return { 
-      statusCode: 500, 
-      body: JSON.stringify({ error: "Internal server error" })
-    };
+    let returnObj = {}
+
+    if(dbError.name === 'ConditionalCheckFailedException' ){
+      returnObj = {
+        statusCode: 409,
+        body: JSON.stringify({ error: "Counter has reached its maximum value of: ", maxCounterValue }) 
+      };
+    }else{
+      returnObj = {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Internal server error" })
+      };
+    }
+
+    return returnObj
   }
 };
