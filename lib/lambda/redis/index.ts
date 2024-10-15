@@ -8,17 +8,14 @@ const redis = new Redis({
 
 // LUA script to increment the counter
 const unconditionalIncrementScript = `
+  redis.call('INCR', KEYS[1])
   local counter = redis.call('GET', KEYS[1])
-  if not counter then
-    counter = 0
-  end
-  counter = counter + 1
-  redis.call('SET', KEYS[1], counter)
   return counter
 `;
 
 // LUA script to increment the counter only if it is less than the given value
 const conditionalIncrementScript = `
+ 
   local counter = redis.call('GET', KEYS[1])
   local maxValue = tonumber(ARGV[1])
   
@@ -26,12 +23,15 @@ const conditionalIncrementScript = `
     counter = 0
   end
   
+  counter = tonumber(counter)
+
   if counter < maxValue then
     redis.call('INCR', KEYS[1])
     counter = redis.call('GET', KEYS[1])
+    return counter
+  else
+    return 'Counter has reached its maximum value of: ' .. maxValue
   end
-
-  return counter
 `;
 
 export const handler = async (event: any = {}): Promise<any> => {
@@ -48,19 +48,25 @@ export const handler = async (event: any = {}): Promise<any> => {
 
     let result;
     if(useConditionalWrites) {
-      result = await redis.eval(conditionalIncrementScript, 1, id, maxCounterValue);
+      result = await redis.eval(conditionalIncrementScript, 1, id, maxCounterValue);  
     }else{
       result = await redis.eval(unconditionalIncrementScript, 1, id);
     }
     
-    const resultJson = JSON.stringify({ counter: result });
+    console.log(result);
 
-    console.log(resultJson);
+    if((result as string).includes('Counter has reached its maximum value of: ')) {
+      return {
+        statusCode: 409,
+        body: JSON.stringify({ error: result })
+      };
+    }else{
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ counter: result })
+      };
+    }
     
-    return {
-      statusCode: 200,
-      body: resultJson,
-    };
   } catch (error) {
     let errorMsg = JSON.stringify({ error: (error as Error).message })
     console.error(errorMsg);
