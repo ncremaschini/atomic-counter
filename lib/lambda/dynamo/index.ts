@@ -8,13 +8,14 @@ const TABLE_NAME = process.env.TABLE_NAME || '';
 
 
 export const handler = async (event: any = {}): Promise<any> => {
- 
+  const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
+  const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
+  
   try {
     const id = event.pathParameters?.id;
     console.log('incrementing counter for id:', id);
     
-    const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
-    const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
+    
     
     console.log('using conditional writes:', useConditionalWrites);
     console.log('max counter value:', maxCounterValue);
@@ -40,6 +41,8 @@ export const handler = async (event: any = {}): Promise<any> => {
       ConditionExpression: 'atomic_counter < :max',
       ExpressionAttributeValues: {
         ':inc': { N: '1' },
+      },
+      ConditionExpressionAttributeValues: {
         ':max': { N: maxCounterValue },
       },
       ReturnValues: 'UPDATED_NEW' as const,
@@ -53,7 +56,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     console.log(resultJson);
     return { 
       statusCode: 200, 
-      body: JSON.stringify({ error: "Counter has reached its maximum value of: ", maxCounterValue }) 
+      body: JSON.stringify(resultJson) 
     };
     
   } catch (dbError : any) {
@@ -61,7 +64,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     if(dbError.name === 'ConditionalCheckFailedException' ){
       return {
         statusCode: 409,
-        body: JSON.stringify(dbError)
+        body: JSON.stringify({ error: "Counter has reached its maximum value of: ", maxCounterValue }) 
       };
     }
 
