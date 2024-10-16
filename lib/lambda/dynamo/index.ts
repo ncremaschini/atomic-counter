@@ -1,11 +1,11 @@
 import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 
 const dynamodb = new DynamoDBClient({});
+const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
+const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
 
 export const handler = async (event: any = {}): Promise<any> => {
-  const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
-  const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
-  
+    
   try {
     const id = event.pathParameters?.id;
     
