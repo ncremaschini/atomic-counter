@@ -16,8 +16,6 @@ export const handler = async (event: any = {}): Promise<any> => {
     
     const result = await redis.eval(getLuaScript(useConditionalWrites), 1, id, maxCounterValue);
     
-    console.log(result);
-
     if ((result as string).includes('Counter has reached its maximum value of: ')) {
       return {
         statusCode: 409,
