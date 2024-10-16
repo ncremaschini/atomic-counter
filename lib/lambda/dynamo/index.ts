@@ -17,7 +17,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     
     return { 
       statusCode: 200, 
-      body: JSON.stringify({ counter:  counter });
+      body: JSON.stringify({ counter:  counter })
     };
     
   } catch (dbError : any) {
