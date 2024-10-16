@@ -1,11 +1,6 @@
-// write a lambda handler to increment the counter in the dynamodb table
 import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 
-import { Condition } from "aws-cdk-lib/aws-stepfunctions";
-
 const dynamodb = new DynamoDBClient({});
-const TABLE_NAME = process.env.TABLE_NAME || '';
-
 
 export const handler = async (event: any = {}): Promise<any> => {
   const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
@@ -13,48 +8,16 @@ export const handler = async (event: any = {}): Promise<any> => {
   
   try {
     const id = event.pathParameters?.id;
-    console.log('incrementing counter for id:', id);
-    console.log('using conditional writes:', useConditionalWrites);
-    console.log('max counter value:', maxCounterValue);
+    
+    const writeParams = getWriteParams(useConditionalWrites, id, maxCounterValue);
 
-    let unconditionalWriteParams = {
-      TableName: TABLE_NAME,
-      Key: {
-        id: { S: id },
-      },
-      UpdateExpression: 'ADD atomic_counter :inc',
-      ExpressionAttributeValues: {
-        ':inc': { N: '1' }
-      },
-      ReturnValues: 'UPDATED_NEW' as const,
-    };
-
-    let conditionalWriteParams = {
-      TableName: TABLE_NAME,
-      Key: {
-        id: { S: id },
-      },
-      UpdateExpression: 'ADD atomic_counter :inc',
-      ConditionExpression: 'atomic_counter < :max',
-      ExpressionAttributeValues: {
-        ':inc': { N: '1' },
-      },
-      ConditionExpressionAttributeValues: {
-        ':max': { N: maxCounterValue },
-      },
-      ReturnValues: 'UPDATED_NEW' as const,
-    };
-
-    const result = await dynamodb.send(new UpdateItemCommand(useConditionalWrites ? conditionalWriteParams : unconditionalWriteParams));
+    const result = await dynamodb.send(new UpdateItemCommand(writeParams));
     
     const counter = Number(result.Attributes?.atomic_counter.N);
     
-    const resultJson = JSON.stringify({ counter:  counter });
-    
-    console.log(resultJson);
     return { 
       statusCode: 200, 
-      body: JSON.stringify(resultJson) 
+      body: JSON.stringify({ counter:  counter });
     };
     
   } catch (dbError : any) {
@@ -67,7 +30,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     if(dbError.name === 'ConditionalCheckFailedException' ){
       returnObj = {
         statusCode: 409,
-        body: JSON.stringify({ error: "Counter has reached its maximum value of: ", maxCounterValue }) 
+        body: JSON.stringify({ error: "Counter has reached its maximum value of: " + maxCounterValue }) 
       };
     }else{
       returnObj = {
@@ -79,3 +42,35 @@ export const handler = async (event: any = {}): Promise<any> => {
     return returnObj
   }
 };
+
+const getWriteParams = (useConditionalWrites: boolean, id: string, maxCounterValue: string) => {
+    const TABLE_NAME = process.env.TABLE_NAME || '';
+
+    const unconditionalWriteParams = {
+      TableName: TABLE_NAME,
+      Key: {
+        id: { S: id },
+      },
+      UpdateExpression: 'ADD atomic_counter :inc',
+      ExpressionAttributeValues: {
+        ':inc': { N: '1' }
+      },
+      ReturnValues: 'UPDATED_NEW' as const,
+    };
+
+    const conditionalWriteParams = {
+      TableName: TABLE_NAME,
+      Key: {
+        id: { S: id },
+      },
+      UpdateExpression: 'ADD atomic_counter :inc',
+      ConditionExpression: 'attribute_not_exists(atomic_counter) or atomic_counter < :max',
+      ExpressionAttributeValues: {
+        ':inc': { N: '1' },
+        ':max': { N: maxCounterValue },
+      },
+      ReturnValues: 'UPDATED_NEW' as const,
+    };
+
+    return useConditionalWrites ? conditionalWriteParams : unconditionalWriteParams;
+}
