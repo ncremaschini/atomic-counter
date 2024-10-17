@@ -30,7 +30,7 @@ describe('handler', () => {
         const result = await handler(event);
 
         expect(result.statusCode).toBe(200);
-        expect(JSON.parse(result.body)).toEqual({ counter: 100 });
+        expect(JSON.parse(result.body)).toEqual({ counter: 100, useConditionalWrites: false });
     });
 
     it('should return status code 200 and the updated counter with conditional writes', async () => {
@@ -42,7 +42,7 @@ describe('handler', () => {
         const result = await handler(event);
 
         expect(result.statusCode).toBe(200);
-        expect(JSON.parse(result.body)).toEqual({ counter: 1 });
+        expect(JSON.parse(result.body)).toEqual({ counter: 1, useConditionalWrites: true });
     });
 
     it('should return status code 409', async () => {

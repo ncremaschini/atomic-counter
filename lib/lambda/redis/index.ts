@@ -10,12 +10,12 @@ const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? tru
 const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
 
 export const handler = async (event: any = {}): Promise<any> => {
-  
+
   try {
     const id = event.pathParameters.id;
-    
+
     const result = await redis.eval(getLuaScript(useConditionalWrites), 1, id, maxCounterValue);
-    
+
     if ((result as string).includes('Counter has reached its maximum value of: ')) {
       return {
         statusCode: 409,
@@ -24,7 +24,10 @@ export const handler = async (event: any = {}): Promise<any> => {
     } else {
       return {
         statusCode: 200,
-        body: JSON.stringify({ counter: Number(result) })
+        body: JSON.stringify({
+          counter: Number(result),
+          useConditionalWrites: useConditionalWrites
+        })
       };
     }
 
