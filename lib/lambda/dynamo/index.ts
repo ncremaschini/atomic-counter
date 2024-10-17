@@ -1,17 +1,18 @@
-import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
+import {UpdateItemCommand} from "@aws-sdk/client-dynamodb";
+import { dynamoDBClient } from "./dynamoDbClient";
 
-const dynamodb = new DynamoDBClient({});
 const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
 const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
 
 export const handler = async (event: any = {}): Promise<any> => {
     
   try {
+    
     const id = event.pathParameters?.id;
     
     const writeParams = getWriteParams(useConditionalWrites, id, maxCounterValue);
 
-    const result = await dynamodb.send(new UpdateItemCommand(writeParams));
+    const result = await dynamoDBClient.send(new UpdateItemCommand(writeParams));
     
     const counter = Number(result.Attributes?.atomic_counter.N);
     

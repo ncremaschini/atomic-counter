@@ -1,7 +1,7 @@
 {
     "Attributes": {
         "atomic_counter": {
-            "N": "5"
+            "N": "100"
         }
     },
     "$metadata": {
