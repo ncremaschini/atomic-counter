@@ -22,10 +22,9 @@ export const handler = async (event: any = {}): Promise<any> => {
     
   } catch (dbError : any) {
     
-    let errorMsg = JSON.stringify(dbError)
-    console.error(errorMsg);
+    console.error(dbError.message);
 
-    let returnObj = {}
+    let returnObj = {};
 
     if(dbError.name === 'ConditionalCheckFailedException' ){
       returnObj = {

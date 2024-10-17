@@ -5,7 +5,6 @@
     "dynamo-incrementer-lambda": "bin/index.js"
   },
   "scripts": {
-    "build": "esbuild index.ts --bundle --platform=node --outfile=index.js --packages=external",
     "test": "jest",
     "cdk": "cdk"
   },

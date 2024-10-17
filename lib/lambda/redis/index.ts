@@ -29,7 +29,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     }
 
   } catch (error) {
-    let errorMsg = JSON.stringify({ error: (error as Error).message })
+    let errorMsg = JSON.stringify({ error: (error as Error).message });
     console.error(errorMsg);
 
     return {
