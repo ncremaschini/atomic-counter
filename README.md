@@ -23,6 +23,11 @@ Then you can deploy the stack with the following command:
 npx cdk deploy
 ```
 
+## How to configure the project
+You can configure the project by editing the `.env` file, where you can set the following variables
+-`USE_CONDITIONAL_WRITES` (possible values: true, false)
+-`MAX_COUNTER_VALUE` (possible values: a number)
+
 ## How to run the project
 Once the stack is deployed, you can use the API Gateway to increment the counter. 
 
@@ -36,6 +41,25 @@ Here an example using curl:
 ```bash
 curl -X POST https://<api_id>.execute-api.<region>.amazonaws.com/prod/dynamo/1 -H "x-api-key: <api_key>"
 ```
+## How to test the project
+You can test the project by running the following command:
+
+```bash
+npm run test
+```
+the command will raise the following warning:
+```bash
+  A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+```
+this is because the redis client mock hungs the process while shutting down. You can ignore the warning
+
+You can run coverage with the following command:
+
+```bash
+npm run coverage
+```
+and it will generate a coverage report in the `coverage` folder.
+Furthemore it pass the `--detectOpenHandles` flag to jest to find leaks, and it reveals that the redis client mock is leaking.
 
 ## How to measure the performance
 You can find a cloudwatch dashboard source json called `cloudwatch-dashboard` into docs folder. 
@@ -56,14 +80,5 @@ In order to produce data i used postman performance's test, sending to the two a
 * `npx cdk diff`    compare deployed stack with current state
 * `npx cdk synth`   emits the synthesized CloudFormation template
 
-## What's next
-I'd implement the following mechanism to limit the counter value.
 
-- lock mechanism
-- conditional writes
-
-in order to measure
-
-- the performance of the two datastores in case of contention between clients
-- the overhead of the lock mechanism / conditional writes
 
