@@ -1,6 +1,6 @@
-import * as dynamoConditionalCheckError from './dynamoConditionalCheckFailed.json';
-import * as dynamoUpdateSuccesConditionalWrites from './dynamoUpdateSuccesConditionalWrites.json';
-import * as dynamoUpdateSuccessUnconditionalWrites from './dynamoUpdateSuccessUnconditionalWrites.json';
+import * as dynamoConditionalCheckError from './dynamoResponses/dynamoConditionalCheckFailed.json';
+import * as dynamoUpdateSuccesConditionalWrites from './dynamoResponses/dynamoUpdateSuccesConditionalWrites.json';
+import * as dynamoUpdateSuccessUnconditionalWrites from './dynamoResponses/dynamoUpdateSuccessUnconditionalWrites.json';
 
 import { UpdateItemCommandOutput } from "@aws-sdk/client-dynamodb";
 import { dynamoDBClient } from '../lib/lambda/dynamo/dynamoDbClient';
