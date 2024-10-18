@@ -11,6 +11,7 @@
     "build-redis": "tsc -p ./lib/lambda/redis",
     "watch": "tsc -w",
     "test": "jest",
+    "coverage": "jest --coverage",
     "cdk": "cdk"
   },
   "devDependencies": {
