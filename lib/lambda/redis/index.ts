@@ -1,25 +1,22 @@
-import Redis from 'ioredis';
-
-// Initialize Redis client with connection details
-const redis = new Redis({
-  host: process.env.REDIS_URL,
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-});
-
-const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
-const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
+import { redisClient } from "./redisClient";
 
 export const handler = async (event: any = {}): Promise<any> => {
+
+  const useConditionalWrites = process.env.USE_CONDITIONAL_WRITES === 'true' ? true : false;
+  const maxCounterValue = process.env.MAX_COUNTER_VALUE || '10';
 
   try {
     const id = event.pathParameters.id;
 
-    const result = await redis.eval(getLuaScript(useConditionalWrites), 1, id, maxCounterValue);
+    const result = await redisClient.eval(getLuaScript(useConditionalWrites), 1, id, maxCounterValue);
 
     if ((result as string).includes('Counter has reached its maximum value of: ')) {
       return {
         statusCode: 409,
-        body: JSON.stringify({ error: result })
+        body: JSON.stringify({
+          error: result,
+          useConditionalWrites: useConditionalWrites
+        })
       };
     } else {
       return {

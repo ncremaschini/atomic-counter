@@ -10,8 +10,8 @@
     "build-dynamo": "tsc -p ./lib/lambda/dynamo",
     "build-redis": "tsc -p ./lib/lambda/redis",
     "watch": "tsc -w",
-    "test": "jest",
-    "coverage": "jest --coverage",
+    "test": "jest" ,
+    "coverage": "jest --coverage --detectOpenHandles --forceExit",
     "cdk": "cdk"
   },
   "devDependencies": {
