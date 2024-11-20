@@ -38,7 +38,7 @@ Other scenarios could be implemented, like incrementing by different steps or de
 ### Condtional writes
 All the datastores used in this project support conditional writes, but in different ways: 
 - Dynamo offers a way to use conditional writes using the `ConditionExpression` parameter in the `PutItem` operation. 
-- Redis offers a way to use conditional writes executing a `LUA Script`, among other ways.
+- Redis offers different ways to use conditional writes. In this project this is achieved executing a `LUA Script`.
 - GoMomento offers a way to use conditional writes using the `setIfPresentAndNotEqual` method, but the increment is perfomed on client side. Moreover clients need to check if the counter is actually present, and if not initialize it to 1 performing a `setIfAbsent` operation. This could lead to race conditions and only one of the competing clients would be able to initialize / increment the counter. 
 - DocumentDB offers conditional writes in many ways. In this project the conditional writes are implemented using the `updateOne` method, configured to perform upserts and specifying filters to check if the counter is under a certain value. In order to avoid duplicates potentially introduced by upserts, an `unique` index is used on the counter field. The index is created by a lambda function triggered by an EventBridge rule on stack creation and update.
 - TiDB offers SQL transactions to perform conditional writes. In this project the conditional writes are implemented using an `INSERT INTO ON DUPLICATE KEY UPDATE` statement with an `IF` statement to check if the counter is under a certain value.
