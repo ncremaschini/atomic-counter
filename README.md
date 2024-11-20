@@ -95,7 +95,18 @@ You can configure the project by editing the `.env` file, where you can set the 
 - `MOMENTO_CACHE_NAME` (possible values: a string)
 
 ###  GoMomento setup
-Momento cluster must be created from [Momento console](https://www.gomomento.com/) Momento console, and you need to provide the `momento_key_info.json` file to the stack placing it in the root folder of the project.
+Momento cluster must be created from [Momento console](https://www.gomomento.com/), and you need to provide the `momento_key_info.json` file to the stack placing it in the root folder of the project.
+
+The file must have the following structure:
+
+```json
+{
+    "apiKey": "XXX",
+    "refreshToken": "XXX",
+    "validUntil": 123456789,
+    "restEndpoint": "https://xxxx"
+}
+```
 
 ### DocumentDB setup
 Unique index on DocumentDB is created by a lambda function triggered by an EventBridge rule on stack creation and update.
