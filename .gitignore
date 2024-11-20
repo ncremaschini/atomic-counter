@@ -1,0 +1,12 @@
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+/coverage
+momento_key_info.json
+tidb_info.json
+update_counter_function.sql
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out

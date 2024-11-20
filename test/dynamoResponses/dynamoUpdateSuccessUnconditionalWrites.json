@@ -1,0 +1,15 @@
+{
+    "Attributes": {
+        "atomic_counter": {
+            "N": "100"
+        }
+    },
+    "$metadata": {
+        "httpStatusCode": 200,
+        "requestId": "mockRequestId",
+        "extendedRequestId": "mockExtendedRequestId",
+        "cfId": "mockCfId",
+        "attempts": 1,
+        "totalRetryDelay": 0
+    }
+}

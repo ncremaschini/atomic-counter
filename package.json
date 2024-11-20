@@ -1,0 +1,39 @@
+{
+  "name": "atomic-counter",
+  "version": "0.1.0",
+  "bin": {
+    "atomic-counter": "bin/atomic-counter.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "cd ./lib/lambda/dynamo && npm install && cd ../redis && npm install && cd ../momento && npm install && cd ../documentDB/clientFactory && npm install && cd ../counterLambda && npm install && cd ../setupLambda && npm install && cd ../../tiDB/clientFactory && npm install && cd ../counterLambda && npm install && cd ../setupLambda && npm install",
+    "watch": "tsc -w",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.670.0",
+    "@types/jest": "^29.5.12",
+    "@types/mongodb": "^4.0.6",
+    "@types/node": "20.14.9",
+    "aws-cdk": "2.154.1",
+    "esbuild": "^0.24.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.5.3"
+  },
+  "dependencies": {
+    "@gomomento/sdk": "^1.99.0",
+    "@types/ioredis": "^4.28.10",
+    "aws-cdk-lib": "2.154.1",
+    "constructs": "^10.0.0",
+    "dotenv": "^16.4.4",
+    "ioredis": "^5.4.1",
+    "mongodb": "^6.10.0",
+    "mysql2": "^3.11.4",
+    "source-map-support": "^0.5.21"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}

@@ -1,0 +1,11 @@
+{
+    "name": "ConditionalCheckFailedException",
+    "$fault": "client",
+    "$metadata": {
+        "httpStatusCode": 400,
+        "requestId": "S0URU8CKMCOR7IG0IEU7KRN9H3VV4KQNSO5AEMVJF66Q9ASUAAJG",
+        "attempts": 1,
+        "totalRetryDelay": 0
+    },
+    "__type": "com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException"
+}
