@@ -1,7 +1,7 @@
 
 # Welcome to Atomic Counter Pattern project
 
-This project is a simple CDK project to test the atomic counter pattern against the following different distributed datastores:
+This is a simple CDK project to test the atomic counter pattern against the following different distributed datastores:
 
 - [DynamoDB](https://aws.amazon.com/dynamodb/) 
 - [Elasticache - Redis](https://aws.amazon.com/redis/)
