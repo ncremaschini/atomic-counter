@@ -1,6 +1,9 @@
 
 # Welcome to Atomic Counter Pattern project
 
+[Blog series available here](https://haveyoutriedrestarting.com/series/atomic-counter)
+
+
 This is a simple CDK project to test the atomic counter pattern against the following different distributed datastores:
 
 - [DynamoDB](https://aws.amazon.com/dynamodb/) 
