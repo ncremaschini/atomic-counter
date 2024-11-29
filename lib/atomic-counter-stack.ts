@@ -449,7 +449,7 @@ export class AtomicCounterStack extends cdk.Stack {
     new logs.MetricFilter(this, "TiDbLambdaMetricFilter", {
       logGroup: docdbLambda.logGroup,
       metricNamespace: "AtomicCounter",
-      metricName: "DocDbAtomicCounter",
+      metricName: "TiDbAtomicCounter",
       filterPattern: logs.FilterPattern.exists("$.counter"),
       metricValue: "$.counter",
       defaultValue: 0,
