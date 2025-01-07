@@ -10,7 +10,7 @@ export const handler = async (event: any = {}): Promise<any> => {
     const id = event.pathParameters.id;
 
     const redisClient = await buildRedisClient();
-
+    
     const result = await redisClient.eval(getLuaScript(useConditionalWrites), 1, id, maxCounterValue);
 
     if ((result as string).includes('Counter has reached its maximum value of: ')) {
