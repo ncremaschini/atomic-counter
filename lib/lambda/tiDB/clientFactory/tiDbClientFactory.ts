@@ -1,5 +1,4 @@
 import { Connection } from "mysql2/promise";
-import { aws_autoscaling_common } from "aws-cdk-lib";
 import { createConnection } from "mysql2/promise";
 
 export const createDbConnection = async (db: any) : Promise<Connection> =>{
