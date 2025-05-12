@@ -12,7 +12,7 @@ This is a simple CDK project to test the atomic counter pattern against the foll
 - [DocumentDB - MongoDB compatible](https://aws.amazon.com/it/documentdb/)
 - [TiDB](https://pingcap.com/products/tidb/)
 
-comparing the solutions and how different distributed storage systems can be used to implement the same pattern in a serverless environment, and how to implement it in distributed applications.
+Comparing the solutions and how different distributed storage systems can be used to implement the same pattern in a serverless environment, and how to implement it in distributed applications.
 
 Please note that in this context the term "counter" is used to indicate a simple integer value that is incremented by one each time.
 
